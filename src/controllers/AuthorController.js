@@ -2,13 +2,7 @@ const { Author } = require("../models");
 
 exports.create = async (req, res) => {
   try {
-    const {
-      body: { name },
-    } = req;
-
-    const trimmedName = name.trim();
-    if (!trimmedName) return res.status(422).send({ message: "Invalid author's name" });
-    const author = await Author.create({ name });
+    const author = await Author.create({ name: req.body.name });
     return res.send(author);
   } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
@@ -26,20 +20,7 @@ exports.getAll = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const errors = [];
-    const { body } = req;
-    if (body.hasOwnProperty("name") && !body.name) {
-      errors.push("Author name shouldn't be empty");
-    }
-    if (body.hasOwnProperty("status") && typeof body.status !== "boolean") {
-      errors.push("Wrong type of status");
-    }
-
-    if (errors.length) {
-      return res.status(400).send({ errors });
-    }
-
-    await Author.updateOne({ _id: req.params.id }, body);
+    await Author.updateOne({ _id: req.params.id }, req.body);
     return res.send({ message: "Author successfully updated" });
   } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });

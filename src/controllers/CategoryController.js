@@ -2,14 +2,7 @@ const { Category, Book } = require("../models");
 
 exports.create = async (req, res) => {
   try {
-    const {
-      body: { name },
-    } = req;
-
-    const trimmedName = name.trim();
-    if (!trimmedName)
-      return res.status(422).send({ message: "Invalid category's name" });
-    const category = await Category.create({ name });
+    const category = await Category.create({ name: req.body.name });
     return res.send(category);
   } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
@@ -27,28 +20,13 @@ exports.getAll = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const errors = [];
-    const { body } = req;
-    if (body.hasOwnProperty("name") && !body.name) {
-      errors.push("Category name shouldn't be empty");
-    }
-    if (body.hasOwnProperty("status") && typeof body.status !== "boolean") {
-      errors.push("Wrong type of status");
-    }
-
-    if (errors.length) {
-      return res.status(400).send({ errors });
-    }
-
-    await Category.updateOne({ _id: req.params.id }, body);
+    await Category.updateOne({ _id: req.params.id }, req.body);
     await Book.updateMany(
       { "category._id": req.params.id },
-      { $set: { category: body } }
+      { $set: { "category.name": body.name, "category.status": body.status } }
     );
-
     return res.send({ message: "Category successfully updated" });
-  } catch (e) {
-    console.log(e);
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
 };
