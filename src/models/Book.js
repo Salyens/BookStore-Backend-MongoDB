@@ -9,7 +9,7 @@ const BookSchema = new mongoose.Schema(
     category: {type: CategorySchema},
     price: { type: Number, minlength: 1, required: true },
     description: { type: String, minlength: 1, required: true },
-    imgURL: { type: String, minlength: 1, required: true },
+    imgURL: { type: String, minlength: 1},
   },
   { versionKey: false }
 );
