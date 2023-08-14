@@ -21,16 +21,13 @@ exports.getAll = async (req, res) => {
   try {
     const book = await Book.find({});
     return res.send(book);
-  } catch (e) {
-    console.log(e);
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
 };
 
 exports.update = async (req, res) => {
   try {
-
-
     await Book.updateOne({ _id: req.params.id }, body);
     return res.send({ message: "Book successfully updated" });
   } catch (e) {
