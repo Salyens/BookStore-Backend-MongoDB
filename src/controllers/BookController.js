@@ -36,10 +36,10 @@ exports.getAll = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
+    const { body } = req;
     await Book.updateOne({ _id: req.params.id }, body);
     return res.send({ message: "Book successfully updated" });
-  } catch (e) {
-    console.log(e);
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
 };

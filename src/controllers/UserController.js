@@ -12,7 +12,15 @@ exports.login = async (req, res) => {
   if (!passwordMatch)
     return res.status(401).send({ message: "Invalid credentials" });
 
-    const accessToken = generateToken({email:foundUser.email, _id:foundUser._id, role: foundUser.role}, '1h');
-    const refreshToken = generateToken({email:foundUser.email, _id:foundUser._id, role: foundUser.role}, '30d');
-    return res.send({accessToken, refreshToken})
+  foundUser.lastLogin = Date(new Date());
+  
+  const accessToken = generateToken(
+    { email: foundUser.email, _id: foundUser._id, role: foundUser.role },
+    "1h"
+  );
+  const refreshToken = generateToken(
+    { email: foundUser.email, _id: foundUser._id, role: foundUser.role },
+    "30d"
+  );
+  return res.send({ accessToken, refreshToken });
 };
