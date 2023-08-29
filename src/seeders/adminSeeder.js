@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const SALT = 10;
 const mongoose = require("mongoose");
-const { Admin } = require("../models");
+const { User } = require("../models");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -20,10 +20,11 @@ const adminSeeder = async () => {
       name: "root",
       email: "sff@mail.ru",
       password: bcrypt.hashSync("123456", SALT),
+      role: "ADMIN",
       lastLogin: 0,
     },
   ];
 
-  await Admin.insertMany(admins);
+  await User.insertMany(admins);
 };
 adminSeeder();

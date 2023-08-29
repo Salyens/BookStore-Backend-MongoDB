@@ -7,7 +7,7 @@ const createAuthor = (req, res, next) => {
 
   const trimmedName = name.trim();
   if (!trimmedName)
-    return res.status(422).send({ message: validationError("author", "name")});
+    return res.status(422).send({ message: validationError("author", "name") });
   return next();
 };
 module.exports = createAuthor;

@@ -1,4 +1,3 @@
-const { validationError } = require("../../helpers/messages");
 
 const updateAuthor = (req, res, next) => {
   const errors = [];

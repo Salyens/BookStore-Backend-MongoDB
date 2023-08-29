@@ -1,15 +1,17 @@
 const router = require("express").Router();
 const BookController = require("../controllers/BookController");
 const { createBook, updateBook } = require("../middlewares/book");
+const { checkRole } = require("../middlewares/user");
+const verifyToken = require("../middlewares/auth/verifyToken");
 
 router
   .route("/")
   .get(BookController.getAll)
-  .post([createBook], BookController.create);
+  .post([verifyToken, checkRole, createBook], BookController.create);
 
 router
   .route("/:id")
-  .patch([updateBook], BookController.update)
-  .delete(BookController.delete);
+  .patch([verifyToken, checkRole, updateBook], BookController.update)
+  .delete([verifyToken, checkRole], BookController.delete);
 
 module.exports = router;
