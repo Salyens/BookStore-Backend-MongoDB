@@ -29,6 +29,7 @@ exports.create = async (req, res) => {
 
       const a = await util.promisify(fs.writeFile)(filePath, imageBuffer);
       // console.log(a);
+      
     }
     const wholeBookInfo = { ...req.body, imgURL: fileName };
 
