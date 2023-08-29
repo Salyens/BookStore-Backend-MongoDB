@@ -8,12 +8,12 @@ exports.login = async (req, res) => {
   if (!foundUser)
     return res.status(401).send({ message: "Invalid credentials" });
 
-  const passwordMatch = bcrypt.compare(password, foundUser.password);
+  const passwordMatch = await bcrypt.compare(password, foundUser.password);
   if (!passwordMatch)
     return res.status(401).send({ message: "Invalid credentials" });
 
-  foundUser.lastLogin = Date(new Date());
-  
+  await User.updateOne({email}, {lastLogin: Date.now()})
+
   const accessToken = generateToken(
     { email: foundUser.email, _id: foundUser._id, role: foundUser.role },
     "1h"
