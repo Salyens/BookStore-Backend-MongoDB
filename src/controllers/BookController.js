@@ -1,8 +1,7 @@
 const { Book, Author, Category } = require("../models");
 const path = require("path");
-const util = require("util");
 const fs = require("fs");
-const addPicture = require("../helpers/addPicture");
+const addPicture = require('../helpers/addPicture')
 
 exports.create = async (req, res) => {
   try {
@@ -21,49 +20,15 @@ exports.create = async (req, res) => {
       author,
       category,
       price,
-      description
+      description,
     };
 
-    const addImgURL = async() => {
-      const { imgURL } = req.files;
-      const mimeType = imgURL.mimetype.split("/")[1];
-      const imageBuffer = Buffer.from(imgURL.data, "base64");
-
-      const folderName = "upload";
-      const folderPath = path.resolve(__dirname, `../${folderName}`);
-
-      const subFolderName = "book_pictures";
-      const subFolderPath = path.resolve(folderPath, subFolderName);
-
-      const fileName = Date.now() + "." + mimeType;
-      const filePath = path.resolve(subFolderPath, fileName);
-
-      let folderExists = false;
-
-      const checkExistUpload = async () => {
-        fs.access(folderPath, fs.constants.F_OK, (err) => {
-          if (!err) folderExists = true;
-        });
-      };
-
-      const createFolders = async () => {
-        fs.mkdir(folderPath, () => {});
-        fs.mkdir(subFolderPath, () => {});
-      };
-
-      checkExistUpload();
-      if (!folderExists) createFolders();
-
-      wholeBookInfo['imgURL'] = `/${subFolderName}/${fileName}`;
-      await util.promisify(fs.writeFile)(filePath, imageBuffer);
-    }
-    
-    const createBook = async() => {
+    const createBook = async () => {
       const book = await Book.create(wholeBookInfo);
       return res.send(book);
-    }
+    };
 
-    addImgURL();
+    addPicture(req, wholeBookInfo, true);
     createBook();
 
   } catch (e) {
@@ -83,8 +48,17 @@ exports.getAll = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const fileName = addPicture(req.files.imgURL);
-    const wholeBookInfo = { ...req.body, imgURL: fileName };
+    const wholeBookInfo = { ...req.body };
+
+    if (req.files.imgURL) {
+      const book = await Book.findOne({ _id: req.params.id });
+      if (!book) return res.status(404).send({ message: "Book is not found" });
+
+      const filePath = path.resolve(__dirname, `../upload/${book.imgURL}`);
+      fs.unlink(filePath, () => {});
+
+      addPicture(req, wholeBookInfo);
+    }
 
     await Book.updateOne({ _id: req.params.id }, wholeBookInfo);
     return res.send({ message: "Book successfully updated" });
@@ -95,11 +69,18 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
+    const book = await Book.findOne({ _id: req.params.id });
+    if (!book) return res.status(404).send({ message: "Book is not found" });
+
+    const filePath = path.resolve(__dirname, `../upload/${book.imgURL}`);
     const { deletedCount } = await Book.deleteOne({ _id: req.params.id });
+
+    fs.unlink(filePath, () => {});
+
     if (!deletedCount)
-      return res.status(404).send({ message: "Book is not found" });
+      return res.status(404).send({ message: "Book hasn't been deleted" });
     return res.send({ message: "Book successfully deleted" });
-  } catch (e) {
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
 };
