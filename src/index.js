@@ -4,10 +4,14 @@ const mongoose = require("mongoose");
 const routes = require("./routes");
 const app = express();
 const fileUpload = require("express-fileupload");
+const path = require("path");
+
+const staticAssetsPath = path.join(__dirname, './upload');
+
 
 dotenv.config();
 app.use(express.json());
-app.use(express.static("static"));
+app.use(express.static(staticAssetsPath));
 app.use(fileUpload({}));
 
 mongoose
