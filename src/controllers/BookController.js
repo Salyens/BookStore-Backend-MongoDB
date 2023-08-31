@@ -1,12 +1,10 @@
 const { Book, Author, Category } = require("../models");
 const path = require("path");
 const fs = require("fs");
-const addPicture = require('../helpers/addPicture')
+const addPicture = require("../helpers/addPicture");
 
 exports.create = async (req, res) => {
   try {
-    const { title, price, description } = req.body;
-
     const author = await Author.findOne({ _id: req.body.authorId });
     if (!author)
       return res.status(404).send({ message: "Author is not found" });
@@ -15,24 +13,12 @@ exports.create = async (req, res) => {
     if (!category)
       return res.status(404).send({ message: "Category is not found" });
 
-    const wholeBookInfo = {
-      title,
-      author,
-      category,
-      price,
-      description,
-    };
-
-    const createBook = async () => {
-      const book = await Book.create(wholeBookInfo);
-      return res.send(book);
-    };
-
+    const wholeBookInfo = { ...req.body, author, category };
     addPicture(req, wholeBookInfo, true);
-    createBook();
 
-  } catch (e) {
-    console.log(e);
+    const book = await Book.create(wholeBookInfo);
+    return res.send(book);
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
 };
