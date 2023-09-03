@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const SALT = 10;
 const { User } = require("../models");
 const { generateToken } = require("../utils/securiry");
 
@@ -43,13 +44,23 @@ exports.generateTokenPairs = (req, res) => {
 
 exports.registration = async (req, res) => {
   try {
+    req.body.password = bcrypt.hashSync(req.body.password, SALT);
     await User.create(req.body);
     const { email, _id, role } = req.body;
     const accessToken = generateToken({ email, _id, role }, "1h");
     return res.send({ accessToken });
-
-  } catch (e) {
-    console.log(e);
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
-}
+};
+
+exports.update = async (req, res) => {
+  try {
+    const { email } = req.user;
+    await User.updateOne({ email }, req.body);
+
+    return res.send({message: "User was successfully updated"});
+  } catch (e) {
+    console.log(e);
+  }
+};
