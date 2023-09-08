@@ -1,14 +1,10 @@
 const { Book, Author, Category } = require("../models");
 const path = require("path");
-const util = require("util");
 const fs = require("fs");
 const addPicture = require("../helpers/addPicture");
 
 exports.create = async (req, res) => {
   try {
-    let mimeType;
-    let filePath;
-    let fileName;
     const author = await Author.findOne({ _id: req.body.authorId });
     if (!author)
       return res.status(404).send({ message: "Author is not found" });
@@ -17,26 +13,12 @@ exports.create = async (req, res) => {
     if (!category)
       return res.status(404).send({ message: "Category is not found" });
 
-    const { imgURL } = req.files;
-    if (imgURL) {
-      mimeType = imgURL.mimetype.split("/")[1];
-      const imageBuffer = Buffer.from(imgURL.data, "base64");
-
-      const rootDirectory = path.resolve(__dirname, "..");
-      const uploadDir = rootDirectory + "/uploads";
-      fileName = Date.now() + "." + mimeType;
-      filePath = path.resolve(uploadDir, fileName);
-
-      const a = await util.promisify(fs.writeFile)(filePath, imageBuffer);
-      console.log(a);
-
-    }
-    const wholeBookInfo = { ...req.body, imgURL: fileName };
+    const wholeBookInfo = { ...req.body, author, category };
+    addPicture(req, wholeBookInfo, true);
 
     const book = await Book.create(wholeBookInfo);
     return res.send(book);
-  } catch (e) {
-    console.log(e);
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
 };
@@ -52,8 +34,17 @@ exports.getAll = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const fileName = addPicture(req.files.imgURL);
-    const wholeBookInfo = { ...req.body, imgURL: fileName };
+    const wholeBookInfo = { ...req.body };
+
+    if (req.files.imgURL) {
+      const book = await Book.findOne({ _id: req.params.id });
+      if (!book) return res.status(404).send({ message: "Book is not found" });
+
+      const filePath = path.resolve(__dirname, `../upload/${book.imgURL}`);
+      fs.unlink(filePath, () => {});
+
+      addPicture(req, wholeBookInfo);
+    }
 
     await Book.updateOne({ _id: req.params.id }, wholeBookInfo);
     return res.send({ message: "Book successfully updated" });
@@ -64,11 +55,18 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
+    const book = await Book.findOne({ _id: req.params.id });
+    if (!book) return res.status(404).send({ message: "Book is not found" });
+
+    const filePath = path.resolve(__dirname, `../upload/${book.imgURL}`);
     const { deletedCount } = await Book.deleteOne({ _id: req.params.id });
+
+    fs.unlink(filePath, () => {});
+
     if (!deletedCount)
-      return res.status(404).send({ message: "Book is not found" });
+      return res.status(404).send({ message: "Book hasn't been deleted" });
     return res.send({ message: "Book successfully deleted" });
-  } catch (e) {
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
 };

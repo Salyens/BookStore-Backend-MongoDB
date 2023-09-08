@@ -1,4 +1,3 @@
-
 const updateAuthor = (req, res, next) => {
   const errors = [];
   const { body } = req;
