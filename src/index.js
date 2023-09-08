@@ -8,7 +8,6 @@ const path = require("path");
 
 const staticAssetsPath = path.join(__dirname, './upload');
 
-
 dotenv.config();
 app.use(express.json());
 app.use(express.static(staticAssetsPath));

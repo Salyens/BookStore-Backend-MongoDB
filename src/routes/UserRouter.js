@@ -2,21 +2,16 @@ const router = require("express").Router();
 const UserController = require("../controllers/UserController");
 const { loginUserMiddleware } = require("../middlewares/user");
 const verifyToken = require("../middlewares/auth/verifyToken");
-const {
-  checkEmail,
-  checkName,
-  checkPassword,
-} = require("../middlewares/registration");
+const registrationValid = require("../middlewares/registration/registrationValid");
+const updateProfile = require("../middlewares/user/updateProfile");
 
 router
   .route("/refresh-Token")
   .get([verifyToken], UserController.generateTokenPairs);
 router.route("/login").post([loginUserMiddleware], UserController.login);
-router
-  .route("/update")
-  .post([verifyToken, checkName, checkEmail], UserController.update);
+router.route("/update-profile").post([verifyToken, updateProfile], UserController.update);
 router
   .route("/registration")
-  .post([checkName, checkEmail, checkPassword], UserController.registration);
+  .post([registrationValid], UserController.registration);
 
 module.exports = router;

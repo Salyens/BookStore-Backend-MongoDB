@@ -44,9 +44,10 @@ exports.generateTokenPairs = (req, res) => {
 
 exports.registration = async (req, res) => {
   try {
-    req.body.password = bcrypt.hashSync(req.body.password, SALT);
-    await User.create(req.body);
+    const password = bcrypt.hashSync(req.body.password, SALT);
     const { email, _id, role } = req.body;
+    await User.create({ ...req.body, password });
+
     const accessToken = generateToken({ email, _id, role }, "1h");
     return res.send({ accessToken });
   } catch (_) {
@@ -56,11 +57,36 @@ exports.registration = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const { email } = req.user;
-    await User.updateOne({ email }, req.body);
+    const errors = [];
+    const { _id } = req.user;
+    const foundUser = await User.findById(_id);
 
-    return res.send({message: "User was successfully updated"});
-  } catch (e) {
-    console.log(e);
+    let { name: newName, email: newEmail, password: newPassword } = req.body;
+
+    if (newPassword) {
+      newPassword = bcrypt.hashSync(newPassword, SALT);
+      const passwordsMatch = await bcrypt.compare(
+        foundUser.password,
+        newPassword
+      );
+      if (passwordsMatch) errors.push("Current password matches new password");
+    }
+
+    if (newName && foundUser.name === newName)
+      errors.push("Current name matches new name");
+
+    if (newEmail && foundUser.email === newEmail)
+      errors.push("Current email matches new email");
+
+    if (errors.length) return res.status(422).send({ message: errors });
+
+    for (const key in req.body) {
+      foundUser[key] = req.body[key];
+    }
+    foundUser.save();
+
+    return res.send({ message: "User was successfully updated" });
+  } catch (_) {
+    return res.status(422).send({ message: "something is wrong" });
   }
 };
