@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const UserController = require("../controllers/UserController");
-const { loginUserMiddleware } = require("../middlewares/user");
+const { loginUser } = require("../middlewares/user");
 const verifyToken = require("../middlewares/auth/verifyToken");
 const registrationValid = require("../middlewares/registration/registrationValid");
 const updateProfile = require("../middlewares/user/updateProfile");
@@ -8,7 +8,7 @@ const updateProfile = require("../middlewares/user/updateProfile");
 router
   .route("/refresh-Token")
   .get([verifyToken], UserController.generateTokenPairs);
-router.route("/login").post([loginUserMiddleware], UserController.login);
+router.route("/login").post([loginUser], UserController.login);
 router.route("/update-profile").post([verifyToken, updateProfile], UserController.update);
 router
   .route("/registration")

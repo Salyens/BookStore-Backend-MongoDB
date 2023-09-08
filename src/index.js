@@ -1,10 +1,12 @@
 const dotenv = require("dotenv");
+require('module-alias/register');
 const express = require("express");
 const mongoose = require("mongoose");
 const routes = require("./routes");
 const app = express();
 const fileUpload = require("express-fileupload");
 const path = require("path");
+
 
 const staticAssetsPath = path.join(__dirname, './upload');
 
@@ -26,3 +28,5 @@ app.listen(process.env.PORT, () =>
 );
 
 app.use(routes);
+
+

@@ -1,3 +1,3 @@
-const loginUserMiddleware = require("./loginUserMiddleware");
+const loginUser = require("./loginUser");
 const checkRole = require("./checkAdminRole");
-module.exports = { loginUserMiddleware,  checkRole};
+module.exports = { loginUser,  checkRole};
