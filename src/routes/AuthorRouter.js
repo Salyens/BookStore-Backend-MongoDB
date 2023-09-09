@@ -6,7 +6,7 @@ const verifyToken = require("../middlewares/auth/verifyToken");
 
 router
   .route("/")
-  .get(AuthorController.getAll)
+  .get([verifyToken], AuthorController.getAll)
   .post( [ verifyToken, checkRole, createAuthor], AuthorController.create);
 
 router

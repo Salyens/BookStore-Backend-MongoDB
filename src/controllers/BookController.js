@@ -25,12 +25,26 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const { page = 1, limit = 10, sortBy = '_id', sortDir = -1 } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "_id",
+      sortDir = -1,
+      search,
+    } = req.query;
     const pageChunk = (page - 1) * limit;
     const total = await Book.countDocuments();
 
-    const books = await Book.find({}).skip(pageChunk).limit(limit).sort({[sortBy]: [sortDir]});
-    return res.send({books, total});
+    const books = await Book.find({
+      $or: [
+        { ["author.name"]: { $regex: search, $options: "i" } },
+        { title: { $regex: search, $options: "i" } },
+      ],
+    })
+      .skip(pageChunk)
+      .limit(limit)
+      .sort({ [sortBy]: [sortDir] });
+    return res.send({ books, total });
   } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
