@@ -1,4 +1,4 @@
-const { validName, validEmail, validPassword } = require('../../utils/validations');
+const { validName, validEmail, validPassword } = require('@utils/validations');
 
 const registrationValid = (req, res, next) => {
     const errors = [];

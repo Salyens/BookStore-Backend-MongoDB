@@ -25,8 +25,12 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const book = await Book.find({});
-    return res.send(book);
+    const { page = 1, limit = 10, sortBy = '_id', sortDir = -1 } = req.query;
+    const pageChunk = (page - 1) * limit;
+    const total = await Book.countDocuments();
+
+    const books = await Book.find({}).skip(pageChunk).limit(limit).sort({[sortBy]: [sortDir]});
+    return res.send({books, total});
   } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
