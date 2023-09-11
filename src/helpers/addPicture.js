@@ -1,7 +1,7 @@
 const path = require("path");
 const util = require("util");
 const fs = require("fs");
-const {FILES_FOLDER, BOOKS_SUBFOLDER} = require('../common/constants')
+const { FILES_FOLDER, BOOKS_SUBFOLDER } = require("@constants");
 
 const addPicture = async (req, wholeBookInfo, isCreate) => {
   const { imgURL } = req.files;

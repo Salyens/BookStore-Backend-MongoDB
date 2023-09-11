@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const BookController = require("../controllers/BookController");
-const { createBook, updateBook } = require("../middlewares/book");
-const { checkRole } = require("../middlewares/user");
-const verifyToken = require("../middlewares/auth/verifyToken");
+const BookController = require("@controllers/BookController");
+const { createBook, updateBook } = require("@middlewares/book");
+const { checkRole } = require("@middlewares/user");
+const verifyToken = require("@middlewares/auth/verifyToken");
 
 router
   .route("/")

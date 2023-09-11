@@ -6,7 +6,9 @@
   "scripts": {
     "start": "nodemon node index.js",
     "seed:admin": "node src/seeders/adminSeeder.js",
-    "seed:book": "node src/seeders/bookSeeder.js"
+    "seed:book": "node src/seeders/bookSeeder.js",
+    "seed:category": "node src/seeders/categorySeeder.js",
+    "seed:author": "node src/seeders/authorSeeder.js"
   },
   "author": "",
   "license": "ISC",
@@ -23,7 +25,13 @@
     "swagger-ui-express": "^5.0.0"
   },
   "_moduleAliases": {
-    "@utils": "./src/utils"
+    "@utils": "./src/utils",
+    "@root": "./src",
+    "@models": "./src/models",
+    "@helpers": "./src/helpers",
+    "@constants": "./src/common/constants",
+    "@controllers": "./src/controllers",
+    "@middlewares": "./src/middlewares"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2"

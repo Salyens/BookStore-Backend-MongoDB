@@ -1,10 +1,10 @@
+const dotenv = require("dotenv");
+dotenv.config();
+require("module-alias/register");
 const bcrypt = require("bcrypt");
 const SALT = 10;
 const mongoose = require("mongoose");
-const { User } = require("../models");
-const dotenv = require("dotenv");
-
-dotenv.config();
+const { User } = require("@models");
 
 mongoose
   .connect(process.env.MONGO_URL, {
@@ -18,7 +18,7 @@ const adminSeeder = async () => {
   const admins = [
     {
       name: "root",
-      email: "sff@mail.ru",
+      email: "ssd34ff@mail.ru",
       password: bcrypt.hashSync("123456", SALT),
       role: "ADMIN",
       lastLogin: 0,
@@ -27,4 +27,10 @@ const adminSeeder = async () => {
 
   await User.insertMany(admins);
 };
-adminSeeder();
+
+try {
+  adminSeeder();
+  console.log("Success");
+} catch (error) {
+  console.error(error);
+}

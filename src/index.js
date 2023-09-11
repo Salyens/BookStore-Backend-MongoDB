@@ -16,26 +16,6 @@ app.use(express.static(staticAssetsPath));
 app.use(fileUpload({}));
 app.use(routes);
 
-const options = {
-  definition: {
-    openapi: "3.1.0",
-    info: {
-      title: "Book Store API",
-      version: "0.1.0",
-      description: "This is a simple CRUD API for Book Store",
-    },
-    servers: [
-      {
-        url: `http://${process.env.HOST}:${process.env.PORT}`,
-      },
-    ],
-  },
-  apis: ["./routes/AuthorRouter.js"],
-};
-
-const specs = swaggerJsdoc(options);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
-
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,

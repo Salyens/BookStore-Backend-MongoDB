@@ -1,8 +1,8 @@
-const { Category, Book } = require("../models");
+const { Category, Book } = require("@models");
 
 exports.create = async (req, res) => {
   try {
-    const category = await Category.create({ name: req.body.name });
+    const category = await Category.create(req.body);
     return res.send(category);
   } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
@@ -23,10 +23,11 @@ exports.update = async (req, res) => {
     await Category.updateOne({ _id: req.params.id }, req.body);
     await Book.updateMany(
       { "category._id": req.params.id },
-      { $set: { "category.name": body.name, "category.status": body.status } }
+      { $set: { "category.name": req.body.name, "category.status": req.body.status } }
     );
     return res.send({ message: "Category successfully updated" });
-  } catch (_) {
+  } catch (e) {
+    console.log(e);
     return res.status(400).send({ message: "Something is wrong" });
   }
 };

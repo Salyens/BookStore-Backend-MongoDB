@@ -1,9 +1,9 @@
 const router = require("express").Router();
-const UserController = require("../controllers/UserController");
-const { loginUser } = require("../middlewares/user");
-const verifyToken = require("../middlewares/auth/verifyToken");
-const registrationValid = require("../middlewares/registration/registrationValid");
-const updateProfile = require("../middlewares/user/updateProfile");
+const UserController = require("@controllers/UserController");
+const { loginUser } = require("@middlewares/user");
+const verifyToken = require("@middlewares/auth/verifyToken");
+const registrationValid = require("@middlewares/registration/registrationValid");
+const updateProfile = require("@middlewares/user/updateProfile");
 
 router
   .route("/refresh-Token")

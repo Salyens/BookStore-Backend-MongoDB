@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
-const { User } = require("../models");
-const { generateToken } = require("../utils/securiry");
+const { User } = require("@models");
+const { generateToken } = require("@utils/securiry");
 
 exports.login = async (req, res) => {
   try {
@@ -49,8 +49,7 @@ exports.registration = async (req, res) => {
 
     const accessToken = generateToken({ email, _id, role }, "1h");
     return res.send({ accessToken });
-  } catch (e) {
-    console.log(e);
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
 };
@@ -64,7 +63,6 @@ exports.update = async (req, res) => {
     let { name: newName, email: newEmail, password: newPassword } = req.body;
 
     if (newPassword) {
-      console.log(foundUser);
       newPassword = bcrypt.hashSync(newPassword, +process.env.SALT);
       const passwordsMatch = await bcrypt.compare(
         foundUser.password,
@@ -87,8 +85,7 @@ exports.update = async (req, res) => {
     foundUser.save();
 
     return res.send({ message: "User was successfully updated" });
-  } catch (e) {
-    console.log(e);
+  } catch (_) {
     return res.status(422).send({ message: "Something is wrong" });
   }
 };

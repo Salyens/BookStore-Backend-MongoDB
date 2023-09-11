@@ -1,7 +1,7 @@
-const { Book, Author, Category } = require("../models");
+const { Book, Author, Category } = require("@models");
 const path = require("path");
 const fs = require("fs");
-const addPicture = require("../helpers/addPicture");
+const addPicture = require("@helpers/addPicture");
 
 exports.create = async (req, res) => {
   try {
@@ -12,6 +12,17 @@ exports.create = async (req, res) => {
     const category = await Category.findOne({ _id: req.body.categoryId });
     if (!category)
       return res.status(404).send({ message: "Category is not found" });
+
+    const bookExist = await Book.find({
+      $and: [
+        { title: req.body.title },
+        { ["author._id"]: req.body.authorId },
+        { ["category._id"]: req.body.categoryId },
+      ],
+    });
+
+    if (bookExist.length)
+      return res.status(400).send({ message: "This book already exists" });
 
     const wholeBookInfo = { ...req.body, author, category };
     addPicture(req, wholeBookInfo, true);
@@ -37,15 +48,24 @@ exports.getAll = async (req, res) => {
 
     const books = await Book.find({
       $or: [
-        { ["author.name"]: { $regex: search, $options: "i" } },
-        { title: { $regex: search, $options: "i" } },
+        {
+          ...(search && { ["author.name"]: { $regex: search, $options: "i" } }),
+          ["author.status"]: true,
+          ["category.status"]: true,
+        },
+        {
+          ...(search && { title: { $regex: search, $options: "i" } }),
+          ["author.status"]: true,
+          ["category.status"]: true,
+        },
       ],
     })
       .skip(pageChunk)
       .limit(limit)
       .sort({ [sortBy]: [sortDir] });
     return res.send({ books, total });
-  } catch (_) {
+  } catch (e) {
+    console.log(e);
     return res.status(400).send({ message: "Something is wrong" });
   }
 };

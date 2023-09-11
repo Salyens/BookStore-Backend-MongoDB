@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const { AuthorSchema } = require("../models/Author");
-const { CategorySchema } = require("../models/Category");
+const { AuthorSchema } = require("./Author");
+const { CategorySchema } = require("./Category");
 
 const BookSchema = new mongoose.Schema(
   {
