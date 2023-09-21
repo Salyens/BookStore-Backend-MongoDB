@@ -35,8 +35,7 @@ exports.generateTokenPairs = (req, res) => {
     const accessToken = generateToken({ email, _id, role }, "1h");
     const refreshToken = generateToken({ email, _id, role }, "30d");
     return res.send({ accessToken, refreshToken });
-  } catch (e) {
-    console.log(e);
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
 };
@@ -57,8 +56,11 @@ exports.registration = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const errors = [];
-    const { _id } = req.user;
-    const foundUser = await User.findById(_id);
+    const { email } = req.user;
+    
+    const foundUser = await User.findOne({ email });
+
+    if (!foundUser) return res.status(404).send({ message: "User not found" });
 
     let { name: newName, email: newEmail, password: newPassword } = req.body;
 

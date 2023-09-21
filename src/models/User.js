@@ -1,3 +1,41 @@
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *         - password
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: The user's name.
+ *           example: John Doe
+ *         email:
+ *           type: string
+ *           description: The user's email address.
+ *           example: user@example.com
+ *         password:
+ *           type: string
+ *           description: The user's password.
+ *           example: examplePassword
+ *         role:
+ *           type: string
+ *           description: The user's role. Default is "USER".
+ *           example: USER
+ *         lastLogin:
+ *           type: object
+ *           description: The timestamp of the user's last login.
+ *           example: 0
+ */
+
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(

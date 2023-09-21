@@ -20,14 +20,20 @@ exports.getAll = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    await Category.updateOne({ _id: req.params.id }, req.body);
+    const categoryId = req.params.id;
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      return res.status(404).send({ message: "Category not found" });
+    }
+    
+    await Category.updateOne({ _id: categoryId }, req.body);
     await Book.updateMany(
-      { "category._id": req.params.id },
+      { "category._id": categoryId },
       { $set: { "category.name": req.body.name, "category.status": req.body.status } }
     );
+    
     return res.send({ message: "Category successfully updated" });
-  } catch (e) {
-    console.log(e);
+  } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
   }
 };

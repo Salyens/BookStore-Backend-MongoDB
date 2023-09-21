@@ -20,17 +20,18 @@ exports.getAll = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    await Author.updateOne({ _id: req.params.id }, req.body);
+    const authorId = req.params.id;
+    const author = await Author.findById(authorId);
+    if (!author) {
+      return res.status(404).send({ message: "Author not found" });
+    }
+    
+    await Author.updateOne({ _id: authorId }, req.body);
     await Book.updateMany(
-      { "author._id": req.params.id },
-      {
-        $set: {
-          "author.name": req.body.name,
-          "author.status": req.body.status,
-        },
-      }
+      { "category._id": authorId },
+      { $set: { "category.name": req.body.name, "category.status": req.body.status } }
     );
-
+    
     return res.send({ message: "Author successfully updated" });
   } catch (_) {
     return res.status(400).send({ message: "Something is wrong" });
