@@ -1,3 +1,25 @@
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   schemas:
+ *     Category:
+ *       type: object
+ *       required:
+ *         - name
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Category name
+ *         status:
+ *           type: boolean
+ *           description: Category status
+ */
+
 const mongoose = require("mongoose");
 
 const CategorySchema = new mongoose.Schema(

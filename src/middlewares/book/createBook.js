@@ -1,4 +1,4 @@
-const { IMG_WHITE_LIST } = require("../../common/constants");
+const { IMG_WHITE_LIST } = require("@constants");
 
 const createBook = (req, res, next) => {
   const {

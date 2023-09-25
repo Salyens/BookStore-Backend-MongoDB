@@ -1,7 +1,7 @@
-const { Book, Author, Category } = require("../models");
+const { Book, Author, Category } = require("@models");
 const path = require("path");
 const fs = require("fs");
-const addPicture = require("../helpers/addPicture");
+const addPicture = require("@helpers/addPicture");
 
 exports.create = async (req, res) => {
   try {
@@ -12,6 +12,17 @@ exports.create = async (req, res) => {
     const category = await Category.findOne({ _id: req.body.categoryId });
     if (!category)
       return res.status(404).send({ message: "Category is not found" });
+
+    const bookExist = await Book.find({
+      $and: [
+        { title: req.body.title },
+        { ["author._id"]: req.body.authorId },
+        { ["category._id"]: req.body.categoryId },
+      ],
+    });
+
+    if (bookExist.length)
+      return res.status(400).send({ message: "This book already exists" });
 
     const wholeBookInfo = { ...req.body, author, category };
     addPicture(req, wholeBookInfo, true);
@@ -25,13 +36,36 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    const { page = 1, limit = 10, sortBy = '_id', sortDir = -1 } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = "_id",
+      sortDir = -1,
+      search,
+    } = req.query;
     const pageChunk = (page - 1) * limit;
     const total = await Book.countDocuments();
 
-    const books = await Book.find({}).skip(pageChunk).limit(limit).sort({[sortBy]: [sortDir]});
-    return res.send({books, total});
-  } catch (_) {
+    const books = await Book.find({
+      $or: [
+        {
+          ...(search && { ["author.name"]: { $regex: search, $options: "i" } }),
+          ["author.status"]: true,
+          ["category.status"]: true,
+        },
+        {
+          ...(search && { title: { $regex: search, $options: "i" } }),
+          ["author.status"]: true,
+          ["category.status"]: true,
+        },
+      ],
+    })
+      .skip(pageChunk)
+      .limit(limit)
+      .sort({ [sortBy]: [sortDir] });
+    return res.send({ books, total });
+  } catch (e) {
+    console.log(e);
     return res.status(400).send({ message: "Something is wrong" });
   }
 };
@@ -40,7 +74,7 @@ exports.update = async (req, res) => {
   try {
     const wholeBookInfo = { ...req.body };
 
-    if (req.files.imgURL) {
+    if (req.files && req.files.imgURL) {
       const book = await Book.findOne({ _id: req.params.id });
       if (!book) return res.status(404).send({ message: "Book is not found" });
 

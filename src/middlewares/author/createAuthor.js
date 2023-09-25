@@ -1,4 +1,4 @@
-const { validationError } = require("../../helpers/messages");
+const { validationError } = require("@helpers/messages");
 
 const createAuthor = (req, res, next) => {
   const {

@@ -1,10 +1,12 @@
-const mongoose = require("mongoose");
-const { Book } = require("../models");
 const dotenv = require("dotenv");
+dotenv.config();
+require("module-alias/register");
+const mongoose = require("mongoose");
+const { Book } = require("@models");
 const { faker } = require("@faker-js/faker");
 const categorySeeder = require("./categorySeeder");
 const authorSeeder = require("./authorSeeder");
-dotenv.config();
+
 
 mongoose
   .connect(process.env.MONGO_URL, {
