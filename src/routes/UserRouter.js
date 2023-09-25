@@ -36,9 +36,24 @@ const updateProfile = require("@middlewares/user/updateProfile");
  *                   example: examplePassword
  *       responses:
  *         200:
- *           description: Login successful
+ *           description: Login was successful
+ *           content:
+ *             application/json:
+ *               example: 
+ *                 accessToken: "eyExampleToken"
+ *                 refreshToken: "eyExampleToken"
  *         400:
- *           description: Invalid login credentials
+ *           description: Something went wrong
+ *           content:
+ *             application/json:
+ *               example: 
+ *                 message: "Invalid credentials"
+ *         401:
+ *           description: Invalid credentials
+ *           content:
+ *             application/json:
+ *               example: 
+ *                 message: "Invalid credentials"
  * 
  *   /user/update-profile:
  *     post:
@@ -64,9 +79,29 @@ const updateProfile = require("@middlewares/user/updateProfile");
  *                   example: newuser@example.com
  *       responses:
  *         200:
- *           description: Profile update successful
+ *           description: The user profile was successfully updated
+ *           content:
+ *             application/json:
+ *               example: 
+ *                 message: "User was successfully updated"
  *         400:
- *           description: Update failed
+ *           description: Something went wrong
+ *           content:
+ *             application/json:
+ *               example: 
+ *                 message: "Something went wrong"
+ *         404:
+ *           description: User not found
+ *           content:
+ *             application/json:
+ *               example: 
+ *                 message: "User not found"
+ *         422:
+ *           description: Invalid name or password
+ *           content:
+ *             application/json:
+ *               example: 
+ *                 message: "Invalid name or password"
  * 
  *   /user/registration:
  *     post:
@@ -94,11 +129,18 @@ const updateProfile = require("@middlewares/user/updateProfile");
  *                   example: examplePassword
  *       responses:
  *         200:
- *           description: Registration successful
+ *           description: Registration was successful
+ *           content:
+ *             application/json:
+ *               example: 
+ *                 accessToken: "eyExampleToken"
  *         400:
- *           description: Registration failed
+ *           description: Something went wrong
+ *           content:
+ *             application/json:
+ *               example: 
+ *                 message: "Something went wrong"
  */
-
 
 router
   .route("/refresh-Token")

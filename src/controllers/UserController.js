@@ -88,6 +88,6 @@ exports.update = async (req, res) => {
 
     return res.send({ message: "User was successfully updated" });
   } catch (_) {
-    return res.status(422).send({ message: "Something is wrong" });
+    return res.status(400).send({ message: "Something is wrong" });
   }
 };

@@ -6,6 +6,10 @@ const verifyToken = require("@middlewares/auth/verifyToken");
 
 /**
  * @swagger
+ * tags:
+ *   - name: Category
+ *     description: Everything about Categories
+ *
  * components:
  *   securitySchemes:
  *     bearerAuth:
@@ -20,98 +24,173 @@ const verifyToken = require("@middlewares/auth/verifyToken");
  *       properties:
  *         name:
  *           type: string
- *           description: The name of the category.
+ *           description: Category's name
+ *         status:
+ *           type: boolean
+ *           description: Category's status
  * 
- * tags:
- *   - name: Category
- *     description: Everything about Categories
- * 
- * paths:
- *   /category:
- *     get:
- *       tags:
- *         - Category
- *       security:
- *         - bearerAuth: []
- *       summary: Get all categories
- *       responses:
- *         200:
- *           description: Returns the list of all categories
- *           content:
- *             application/json:
- *               schema:
- *                 type: array
- *                 items:
- *                   $ref: '#/components/schemas/Category'
- *     post:
- *       tags:
- *         - Category
- *       security:
- *         - bearerAuth: []
- *       summary: Create a new category
- *       requestBody:
- *         required: true
+ * /category:
+ *   get:
+ *     tags:
+ *       - Category
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get all categories
+ *     responses:
+ *       200:
+ *         description: Returns the list of all categories
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Category'
- *       responses:
- *         201:
- *           description: Category successfully created
- *         400:
- *           description: Validation error
- * 
- *   /category/{id}:
- *     patch:
- *       tags:
- *         - Category
- *       security:
- *         - bearerAuth: []
- *       summary: Update a category
- *       parameters:
- *         - in: path
- *           name: id
- *           required: true
- *           schema:
- *             type: string
- *           description: ID of the category to update
- *       requestBody:
- *         required: true
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Category'
- *       responses:
- *         200:
- *           description: Category successfully updated
- *           content:
- *             application/json:
- *               schema:
+ *               type: array
+ *               items:
  *                 $ref: '#/components/schemas/Category'
- *         400:
- *           description: Validation error
- *     delete:
- *       tags:
- *         - Category
- *       security:
- *         - bearerAuth: []
- *       summary: Delete a category
- *       parameters:
- *         - in: path
- *           name: id
- *           required: true
+ *             example:
+ *               - _id: "64feff86f18e04d1d3757262"
+ *                 name: "Category Name"
+ *                 status: true
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Something went wrong"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ *
+ *   post:
+ *     tags:
+ *       - Category
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Create a new category
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
  *           schema:
- *             type: string
- *           description: ID of the category to delete
- *       responses:
- *         200:
- *           description: Category successfully deleted
- *         404:
- *           description: Category not found
- *         400:
- *           description: Deletion error
+ *             $ref: '#/components/schemas/Category'
+ *     responses:
+ *       200:
+ *         description: Category successfully created
+ *         content:
+ *           application/json:
+ *             example:
+ *               _id: "65116495368459dbe880225e"
+ *               name: "Category Name"
+ *               status: true
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Something went wrong"
+ *       422:
+ *         description: Unprocessable Entity
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Invalid category's name"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ *
+ * /category/{id}:
+ *   patch:
+ *     tags:
+ *       - Category
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Update a category
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the category to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Category'
+ *     responses:
+ *       200:
+ *         description: Category successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *             example:
+ *               _id: "64feff86f18e04d1d3757262"
+ *               name: "Category Name"
+ *               status: true
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Something went wrong"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ *       404:
+ *         description: Category not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Category not found"
+ *
+ *   delete:
+ *     tags:
+ *       - Category
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Delete a category
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the category to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Category successfully deleted
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Category successfully deleted"
+ *       400:
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Something went wrong"
+ *       404:
+ *         description: Category not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Category not found"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
  */
-
 
 router
   .route("/")

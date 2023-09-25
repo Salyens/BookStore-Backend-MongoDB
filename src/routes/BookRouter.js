@@ -6,134 +6,195 @@ const verifyToken = require("@middlewares/auth/verifyToken");
 
 /**
  * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   schemas:
+ *     Book:
+ *       type: object
+ *       required:
+ *         - title
+ *         - authorId
+ *         - categoryId
+ *         - price
+ *         - description
+ *         - imgURL
+ *       properties:
+ *         title:
+ *           type: string
+ *           description: The title of the book.
+ *         authorId:
+ *           type: string
+ *           description: The ID of the author of the book.
+ *         categoryId:
+ *           type: string
+ *           description: The ID of the category of the book.
+ *         price:
+ *           type: number
+ *           format: float
+ *           description: The price of the book.
+ *         description:
+ *           type: string
+ *           description: The description of the book.
+ *         imgURL:
+ *           type: string
+ *           description: The URL of the image of the book.
+ *           format: binary
  * tags:
  *   - name: Book
  *     description: Everything about Books
- * 
- * /book:
- *   get:
- *     tags:
- *       - Book
- *     security:
- *       - bearerAuth: []
- *     summary: Get books
- *     responses:
- *       200:
- *         description: Returns the list of all books
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Book'
- *       404:
- *         description: Books not found
- *       400:
- *         description: Error
- *   post:
- *     tags:
- *       - Book
- *     security:
- *       - bearerAuth: []
- *     summary: Create a new book
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               authorId:
- *                 type: string
- *               categoryId:
- *                 type: string
- *               price:
- *                 type: string
- *               description:
- *                 type: string
- *               imgURL:
- *                 type: string
- *                 format: binary
- *             required:
- *               - title
- *               - authorId
- *               - categoryId
- *               - price
- *               - description
- *               - imgURL
- *     responses:
- *       201:
- *         description: Book successfully created
- *       400:
- *         description: Validation error
- *
- * /book/{id}:
- *   patch:
- *     tags:
- *       - Book
- *     security:
- *       - bearerAuth: []
- *     summary: Update a book
- *     parameters:
- *       - in: path
- *         name: id
+ * paths:
+ *   /book:
+ *     get:
+ *       tags:
+ *         - Book
+ *       security:
+ *         - bearerAuth: []
+ *       summary: Get books
+ *       responses:
+ *         200:
+ *           description: Returns the list of all books
+ *           content:
+ *             application/json:
+ *               example:
+ *                 - _id: "64feff86f18e04d1d3757262"
+ *                   title: "Book Title"
+ *                   authorId: "64feff86f18e04d1d3757263"
+ *                   categoryId: "64feff86f18e04d1d3757264"
+ *                   price: 20.00
+ *                   description: "Description of the book."
+ *                   imgURL: "http://example.com/img.jpg"
+ *         400:
+ *           description: Bad Request
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "Something went wrong"
+ *         404:
+ *           description: Books not found
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "Books not found"
+ *     post:
+ *       tags:
+ *         - Book
+ *       security:
+ *         - bearerAuth: []
+ *       summary: Create a new book
+ *       requestBody:
  *         required: true
- *         description: ID of the book to update
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               authorId:
- *                 type: string
- *               categoryId:
- *                 type: string
- *               price:
- *                 type: string
- *               description:
- *                 type: string
- *               imgURL:
- *                 type: string
- *                 format: binary
- *     responses:
- *       200:
- *         description: Book successfully updated
  *         content:
- *           application/json:
+ *           multipart/form-data:
  *             schema:
  *               $ref: '#/components/schemas/Book'
- *       400:
- *         description: Validation error
- *
- *   delete:
- *     tags:
- *       - Book
- *     security:
- *       - bearerAuth: []
- *     summary: Delete a book
- *     parameters:
- *       - in: path
- *         name: id
+ *       responses:
+ *         200:
+ *           description: Book successfully created
+ *           content:
+ *             application/json:
+ *               example:
+ *                 _id: "64feff86f18e04d1d3757262"
+ *                 title: "Book Title"
+ *                 authorId: "64feff86f18e04d1d3757263"
+ *                 categoryId: "64feff86f18e04d1d3757264"
+ *                 price: 20.00
+ *                 description: "Description of the book."
+ *                 imgURL: "http://example.com/img.jpg"
+ *         400:
+ *           description: Bad Request
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "Something went wrong"
+ *         422:
+ *           description: Unprocessable Entity
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "Invalid book data"
+ *   /book/{id}:
+ *     patch:
+ *       tags:
+ *         - Book
+ *       security:
+ *         - bearerAuth: []
+ *       summary: Update a book
+ *       parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           schema:
+ *             type: string
+ *           description: ID of the book to update
+ *       requestBody:
  *         required: true
- *         description: ID of the book to delete
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Book successfully deleted
- *       404:
- *         description: Book not found
- *       400:
- *         description: Deletion error
+ *         content:
+ *           multipart/form-data:
+ *             schema:
+ *               $ref: '#/components/schemas/Book'
+ *       responses:
+ *         200:
+ *           description: Book successfully updated
+ *           content:
+ *             application/json:
+ *               example:
+ *                 _id: "64feff86f18e04d1d3757262"
+ *                 title: "Updated Book Title"
+ *                 authorId: "64feff86f18e04d1d3757263"
+ *                 categoryId: "64feff86f18e04d1d3757264"
+ *                 price: 25.00
+ *                 description: "Updated description of the book."
+ *                 imgURL: "http://example.com/updated_img.jpg"
+ *         400:
+ *           description: Bad Request
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "Something went wrong"
+ *         404:
+ *           description: Book not found
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "Book not found"
+ *     delete:
+ *       tags:
+ *         - Book
+ *       security:
+ *         - bearerAuth: []
+ *       summary: Delete a book
+ *       parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           schema:
+ *             type: string
+ *           description: ID of the book to delete
+ *       responses:
+ *         200:
+ *           description: Book successfully deleted
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "Book successfully deleted"
+ *         400:
+ *           description: Bad Request
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "Something went wrong"
+ *         404:
+ *           description: Book not found
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "Book not found"
  */
+
 
 router
   .route("/")
